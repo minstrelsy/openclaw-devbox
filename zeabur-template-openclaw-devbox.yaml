@@ -2,10 +2,10 @@
 apiVersion: zeabur.com/v1
 kind: Template
 metadata:
-    name: OpenClaw DevBox 🦞
+    name: OpenClaw devbox 🦞
 spec:
     description: |
-      OpenClaw DevBox is a remote execution node for OpenClaw with programming languages and dev tools pre-installed (Python, Go, Rust, gcc, git, jq). User-installed packages persist across restarts via a persistent volume.
+      OpenClaw devbox is a remote execution node for OpenClaw with programming languages and dev tools pre-installed (Python, Go, Rust, gcc, git, jq). User-installed packages persist across restarts via a persistent volume.
     icon: https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/pixel-lobster.svg
     coverImage: https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/openclaw-logo-text.png
     variables:
@@ -13,12 +13,16 @@ spec:
         type: STRING
         name: Gateway Token
         description: The gateway authentication token of your OpenClaw instance
+      - key: GATEWAY_HOST
+        type: STRING
+        name: Gateway Host
+        description: The Zeabur service name of your OpenClaw instance
     tags:
       - AI
       - DevTools
 
     readme: |
-      # OpenClaw DevBox 🦞
+      # OpenClaw devbox 🦞
 
       A remote execution node for OpenClaw with programming languages and dev tools pre-installed.
 
@@ -39,8 +43,13 @@ spec:
 
       ## Setup
       1. Deploy this template to the **same Zeabur project** as your OpenClaw instance
-      2. Enter the **Gateway Token** from your OpenClaw service
-      3. The DevBox node will automatically connect to OpenClaw via internal DNS
+      2. Enter the **Gateway Token** and **Gateway Host** (the Zeabur service name of your OpenClaw instance)
+      3. The devbox node will connect to OpenClaw and send a pairing request
+      4. Approve the pairing request in your OpenClaw service terminal:
+         ```
+         openclaw devices list       # find the pending request ID
+         openclaw devices approve <requestId>
+         ```
 
       ## Recommended Resources
       - **CPU**: 2 vCPU
@@ -48,17 +57,17 @@ spec:
       - **Volume**: 10 GB
 
       ## Verification
-      After deployment, check that the DevBox node appears in OpenClaw:
+      After deployment, check that the devbox node appears in OpenClaw:
       - Run `openclaw nodes list` in your OpenClaw service terminal
       - Or check the Nodes page in the OpenClaw Web UI
 
       ## Architecture
-      - No exposed ports — the DevBox initiates an outbound WebSocket connection to the OpenClaw gateway
+      - No exposed ports — the devbox initiates an outbound WebSocket connection to the OpenClaw gateway
       - `exec.security` is set to `full` — no interactive approval needed for command execution
       - System runtimes are baked into the image; user packages live on the persistent volume
 
     services:
-      - name: DevBox
+      - name: openclaw-devbox
         icon: https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/pixel-lobster.svg
         template: PREBUILT
         spec:
@@ -82,20 +91,19 @@ spec:
                 CONFIG_DIR="$HOME/.openclaw"
                 CONFIG_FILE="$CONFIG_DIR/openclaw.json"
 
-                # Create config with full exec security (no approval needed for server-side container)
-                if [ ! -f "$CONFIG_FILE" ]; then
-                  mkdir -p "$CONFIG_DIR"
-                  cat > "$CONFIG_FILE" << 'CONF'
+                # Create config: full exec without approval (tool availability is gateway-side)
+                mkdir -p "$CONFIG_DIR"
+                cat > "$CONFIG_FILE" << 'CONF'
                 {
                   "tools": {
                     "exec": {
-                      "security": "full"
+                      "security": "full",
+                      "ask": "off"
                     }
                   }
                 }
                 CONF
-                  chmod 600 "$CONFIG_FILE"
-                fi
+                chmod 600 "$CONFIG_FILE"
 
                 # Ensure user-level directories exist on persistent volume
                 mkdir -p "$HOME/.local/bin"
@@ -104,57 +112,55 @@ spec:
                 mkdir -p "$HOME/.cargo/bin"
                 mkdir -p "$HOME/workspace"
 
-                # Start node host — connects to OpenClaw gateway via internal DNS
-                exec node /app/dist/index.js node run \
-                  --host "${GATEWAY_HOST:-OpenClaw}" \
-                  --port "${GATEWAY_PORT:-18789}" \
-                  --display-name "${NODE_DISPLAY_NAME:-DevBox}"
+                # Start node host — retry on pairing rejection to avoid container restart loop
+                RETRY_DELAY=10
+                while true; do
+                  echo "Connecting to gateway ${GATEWAY_HOST:-OpenClaw}:${GATEWAY_PORT:-18789}..."
+                  node /app/dist/index.js node run \
+                    --host "${GATEWAY_HOST:-OpenClaw}" \
+                    --port "${GATEWAY_PORT:-18789}" \
+                    --display-name "${NODE_DISPLAY_NAME:-devbox}" && break
+                  echo "Connection lost. Retrying in ${RETRY_DELAY}s..."
+                  sleep "$RETRY_DELAY"
+                done
           env:
             OPENCLAW_GATEWAY_TOKEN:
               default: ${GATEWAY_TOKEN}
             HOME:
               default: /home/node
-              readonly: true
             GATEWAY_HOST:
-              default: OpenClaw
+              default: ${GATEWAY_HOST}
             GATEWAY_PORT:
               default: "18789"
-              readonly: true
             NODE_DISPLAY_NAME:
-              default: DevBox
+              default: devbox
             NODE_ENV:
               default: production
-              readonly: true
             NODE_OPTIONS:
               default: --max-old-space-size=1024
-              readonly: true
             PIP_USER:
               default: "1"
-              readonly: true
             PYTHONUSERBASE:
               default: /home/node/.local
-              readonly: true
             NPM_CONFIG_PREFIX:
               default: /home/node/.npm-global
-              readonly: true
             GOPATH:
               default: /home/node/go
-              readonly: true
             RUSTUP_HOME:
               default: /home/node/.rustup
-              readonly: true
             CARGO_HOME:
               default: /home/node/.cargo
-              readonly: true
             PATH:
               default: /home/node/.local/bin:/home/node/.npm-global/bin:/home/node/go/bin:/home/node/.cargo/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-              readonly: true
 
 localization:
   zh-TW:
-    name: OpenClaw DevBox 🦞
-    description: OpenClaw DevBox 是 OpenClaw 的遠端執行節點，預裝多種程式語言與開發工具（Python、Go、Rust、gcc、git、jq）。使用者安裝的套件透過持久化磁碟保留。
+    name: OpenClaw devbox 🦞
+    description: OpenClaw devbox 是 OpenClaw 的遠端執行節點，預裝多種程式語言與開發工具（Python、Go、Rust、gcc、git、jq）。使用者安裝的套件透過持久化磁碟保留。
     variables:
       - key: GATEWAY_TOKEN
         name: Gateway Token
         description: 您的 OpenClaw 實例的 Gateway 認證令牌
+      - key: GATEWAY_HOST
+        name: Gateway Host
+        description: 您的 OpenClaw 實例的 Zeabur 服務名稱

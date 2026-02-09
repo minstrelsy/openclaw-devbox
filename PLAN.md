@@ -1,4 +1,4 @@
-# OpenClaw DevBox Node - Implementation Plan
+# OpenClaw devbox Node - Implementation Plan
 
 ## Overview
 
@@ -10,7 +10,7 @@ Create a container based on the **OpenClaw Docker image** that runs as a **remot
 
 ```
 ┌─────────────────────┐        WebSocket         ┌──────────────────────────┐
-│   OpenClaw Gateway  │◄───────────────────────►  │   DevBox Node            │
+│   OpenClaw Gateway  │◄───────────────────────►  │   devbox Node            │
 │   (port 18789)      │                           │                          │
 │   AI Agent ─────────┤   node.invoke.request     │   System (in image):     │
 │   "run python ..." ─┤   node.invoke.result      │     python3, node, go    │
@@ -126,7 +126,7 @@ mkdir -p "$HOME/workspace"
 exec node /app/dist/index.js node run \
   --host "${GATEWAY_HOST:-OpenClaw}" \
   --port "${GATEWAY_PORT:-18789}" \
-  --display-name "${NODE_DISPLAY_NAME:-DevBox}"
+  --display-name "${NODE_DISPLAY_NAME:-devbox}"
 ```
 
 ### Environment variables:
@@ -136,7 +136,7 @@ exec node /app/dist/index.js node run \
 | `HOME` | `/home/node` | readonly |
 | `GATEWAY_HOST` | `OpenClaw` | Zeabur internal DNS name of the gateway |
 | `GATEWAY_PORT` | `18789` | readonly |
-| `NODE_DISPLAY_NAME` | `DevBox` | Display name shown in node list |
+| `NODE_DISPLAY_NAME` | `devbox` | Display name shown in node list |
 
 ### Resource recommendation:
 - CPU: 2 vCPU
@@ -168,7 +168,7 @@ docker push ghcr.io/canyugs/openclaw-devbox:latest
 1. **`exec.security: "full"`** — Server-side container, no interactive approval needed
 2. **System runtimes in image** — python3, go, rustc, gcc always available regardless of volume state
 3. **User packages on volume** — pip, npm, go, cargo installs persist across container restarts
-4. **No exposed ports** — DevBox initiates outbound WebSocket, no inbound traffic needed
+4. **No exposed ports** — devbox initiates outbound WebSocket, no inbound traffic needed
 
 ## Verification
 
@@ -179,7 +179,7 @@ docker push ghcr.io/canyugs/openclaw-devbox:latest
      node /app/dist/index.js node run --host host.docker.internal --port 18789
    ```
 
-2. **Check node appears:** `openclaw nodes list` should show "DevBox"
+2. **Check node appears:** `openclaw nodes list` should show "devbox"
 
 3. **Test language execution:**
    - `python3 -c "print('hello')"`
