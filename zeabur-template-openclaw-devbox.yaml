@@ -16,7 +16,7 @@ spec:
       - key: GATEWAY_HOST
         type: STRING
         name: Gateway Host
-        description: The Zeabur service name of your OpenClaw instance
+        description: The Zeabur service name of your OpenClaw instance (used as internal hostname, e.g. "openclaw")
     tags:
       - AI
       - DevTools
@@ -54,7 +54,6 @@ spec:
       ## Recommended Resources
       - **CPU**: 2 vCPU
       - **Memory**: 2048 MB
-      - **Volume**: 10 GB
 
       ## Verification
       After deployment, check that the devbox node appears in OpenClaw:
@@ -69,7 +68,7 @@ spec:
     services:
       - name: openclaw-devbox
         icon: https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/pixel-lobster.svg
-        template: PREBUILT
+        template: PREBUILT_V2
         spec:
           source:
             image: ghcr.io/canyugs/openclaw-devbox:latest
@@ -91,19 +90,27 @@ spec:
                 CONFIG_DIR="$HOME/.openclaw"
                 CONFIG_FILE="$CONFIG_DIR/openclaw.json"
 
-                # Create config: full exec without approval (tool availability is gateway-side)
-                mkdir -p "$CONFIG_DIR"
-                cat > "$CONFIG_FILE" << 'CONF'
+                # Create config with full exec security (no approval needed for server-side container)
+                if [ ! -f "$CONFIG_FILE" ]; then
+                  mkdir -p "$CONFIG_DIR"
+                  cat > "$CONFIG_FILE" << 'CONF'
                 {
                   "tools": {
                     "exec": {
-                      "security": "full",
-                      "ask": "off"
+                      "security": "full"
                     }
                   }
                 }
                 CONF
-                chmod 600 "$CONFIG_FILE"
+                  chmod 600 "$CONFIG_FILE"
+                fi
+
+                # Create openclaw CLI wrapper
+                cat > "$HOME/.local/bin/openclaw" << 'WRAPPER'
+                #!/bin/sh
+                exec node /app/dist/index.js "$@"
+                WRAPPER
+                chmod +x "$HOME/.local/bin/openclaw"
 
                 # Ensure user-level directories exist on persistent volume
                 mkdir -p "$HOME/.local/bin"
@@ -115,9 +122,9 @@ spec:
                 # Start node host — retry on pairing rejection to avoid container restart loop
                 RETRY_DELAY=10
                 while true; do
-                  echo "Connecting to gateway ${GATEWAY_HOST:-OpenClaw}:${GATEWAY_PORT:-18789}..."
-                  node /app/dist/index.js node run \
-                    --host "${GATEWAY_HOST:-OpenClaw}" \
+                  echo "Connecting to gateway ${GATEWAY_HOST:-openclaw}:${GATEWAY_PORT:-18789}..."
+                  openclaw node run \
+                    --host "${GATEWAY_HOST:-openclaw}" \
                     --port "${GATEWAY_PORT:-18789}" \
                     --display-name "${NODE_DISPLAY_NAME:-devbox}" && break
                   echo "Connection lost. Retrying in ${RETRY_DELAY}s..."
@@ -155,7 +162,6 @@ spec:
 
 localization:
   zh-TW:
-    name: OpenClaw devbox 🦞
     description: OpenClaw devbox 是 OpenClaw 的遠端執行節點，預裝多種程式語言與開發工具（Python、Go、Rust、gcc、git、jq）。使用者安裝的套件透過持久化磁碟保留。
     variables:
       - key: GATEWAY_TOKEN
@@ -163,4 +169,259 @@ localization:
         description: 您的 OpenClaw 實例的 Gateway 認證令牌
       - key: GATEWAY_HOST
         name: Gateway Host
-        description: 您的 OpenClaw 實例的 Zeabur 服務名稱
+        description: 您的 OpenClaw 實例在 Zeabur 上的服務名稱，作為內部主機名使用（例如 "openclaw"）
+    readme: |
+      # OpenClaw devbox 🦞
+
+      OpenClaw 的遠端執行節點，預裝多種程式語言與開發工具。
+
+      ## 預裝語言與工具
+      - **Python 3**（python3、pip、venv）
+      - **Node.js**（來自 OpenClaw 基礎映像檔）
+      - **Go**（golang）
+      - **Rust**（rustc、cargo）
+      - **C/C++**（gcc、g++、make、cmake）
+      - **開發工具**：git、curl、wget、jq、unzip、zip
+
+      ## 持久化使用者套件
+      使用者安裝的套件在容器重啟後仍會保留：
+      - `pip install` → `~/.local/`
+      - `npm install -g` → `~/.npm-global/`
+      - `go install` → `~/go/`
+      - `cargo install` → `~/.cargo/`
+
+      ## 設定步驟
+      1. 將此模板部署到與您的 OpenClaw 實例**相同的 Zeabur 專案**
+      2. 輸入 **Gateway Token** 和 **Gateway Host**（您的 OpenClaw 實例的 Zeabur 服務名稱）
+      3. devbox 節點將連線至 OpenClaw 並發送配對請求
+      4. 在您的 OpenClaw 服務終端中批准配對請求：
+         ```
+         openclaw devices list       # 找到待處理的請求 ID
+         openclaw devices approve <requestId>
+         ```
+
+      ## 建議資源配置
+      - **CPU**：2 vCPU
+      - **記憶體**：2048 MB
+
+      ## 驗證
+      部署後，確認 devbox 節點已出現在 OpenClaw 中：
+      - 在 OpenClaw 服務終端中執行 `openclaw nodes list`
+      - 或在 OpenClaw Web UI 的節點頁面中查看
+
+      ## 架構
+      - 無對外公開端口 — devbox 透過 WebSocket 主動連線至 OpenClaw gateway
+      - `exec.security` 設為 `full` — 執行指令時無需互動式批准
+      - 系統執行環境內建於映像檔中；使用者套件儲存在持久化磁碟上
+
+  zh-CN:
+    description: OpenClaw devbox 是 OpenClaw 的远程执行节点，预装多种编程语言与开发工具（Python、Go、Rust、gcc、git、jq）。用户安装的包通过持久化磁盘保留。
+    variables:
+      - key: GATEWAY_TOKEN
+        name: Gateway Token
+        description: 您的 OpenClaw 实例的 Gateway 认证令牌
+      - key: GATEWAY_HOST
+        name: Gateway Host
+        description: 您的 OpenClaw 实例在 Zeabur 上的服务名称，作为内部主机名使用（例如 "openclaw"）
+    readme: |
+      # OpenClaw devbox 🦞
+
+      OpenClaw 的远程执行节点，预装多种编程语言与开发工具。
+
+      ## 预装语言与工具
+      - **Python 3**（python3、pip、venv）
+      - **Node.js**（来自 OpenClaw 基础镜像）
+      - **Go**（golang）
+      - **Rust**（rustc、cargo）
+      - **C/C++**（gcc、g++、make、cmake）
+      - **开发工具**：git、curl、wget、jq、unzip、zip
+
+      ## 持久化用户包
+      用户安装的包在容器重启后仍会保留：
+      - `pip install` → `~/.local/`
+      - `npm install -g` → `~/.npm-global/`
+      - `go install` → `~/go/`
+      - `cargo install` → `~/.cargo/`
+
+      ## 设置步骤
+      1. 将此模板部署到与您的 OpenClaw 实例**相同的 Zeabur 项目**
+      2. 输入 **Gateway Token** 和 **Gateway Host**（您的 OpenClaw 实例的 Zeabur 服务名称）
+      3. devbox 节点将连接至 OpenClaw 并发送配对请求
+      4. 在您的 OpenClaw 服务终端中批准配对请求：
+         ```
+         openclaw devices list       # 找到待处理的请求 ID
+         openclaw devices approve <requestId>
+         ```
+
+      ## 建议资源配置
+      - **CPU**：2 vCPU
+      - **内存**：2048 MB
+
+      ## 验证
+      部署后，确认 devbox 节点已出现在 OpenClaw 中：
+      - 在 OpenClaw 服务终端中执行 `openclaw nodes list`
+      - 或在 OpenClaw Web UI 的节点页面中查看
+
+      ## 架构
+      - 无对外公开端口 — devbox 通过 WebSocket 主动连接至 OpenClaw gateway
+      - `exec.security` 设为 `full` — 执行命令时无需交互式批准
+      - 系统运行环境内置于镜像中；用户包存储在持久化磁盘上
+
+  ja-JP:
+    description: OpenClaw devbox は OpenClaw のリモート実行ノードで、プログラミング言語と開発ツール（Python、Go、Rust、gcc、git、jq）がプリインストールされています。ユーザーがインストールしたパッケージは永続ボリュームにより保持されます。
+    variables:
+      - key: GATEWAY_TOKEN
+        name: Gateway トークン
+        description: OpenClaw インスタンスの Gateway 認証トークン
+      - key: GATEWAY_HOST
+        name: Gateway ホスト
+        description: OpenClaw インスタンスの Zeabur サービス名（内部ホスト名として使用、例："openclaw"）
+    readme: |
+      # OpenClaw devbox 🦞
+
+      プログラミング言語と開発ツールがプリインストールされた OpenClaw のリモート実行ノード。
+
+      ## プリインストール済み言語・ツール
+      - **Python 3**（python3、pip、venv）
+      - **Node.js**（OpenClaw ベースイメージに含まれます）
+      - **Go**（golang）
+      - **Rust**（rustc、cargo）
+      - **C/C++**（gcc、g++、make、cmake）
+      - **開発ツール**：git、curl、wget、jq、unzip、zip
+
+      ## パッケージの永続化
+      ユーザーがインストールしたパッケージはコンテナの再起動後も保持されます：
+      - `pip install` → `~/.local/`
+      - `npm install -g` → `~/.npm-global/`
+      - `go install` → `~/go/`
+      - `cargo install` → `~/.cargo/`
+
+      ## セットアップ
+      1. このテンプレートを OpenClaw インスタンスと**同じ Zeabur プロジェクト**にデプロイします
+      2. **Gateway Token** と **Gateway Host**（OpenClaw インスタンスの Zeabur サービス名）を入力します
+      3. devbox ノードが OpenClaw に接続し、ペアリングリクエストを送信します
+      4. OpenClaw サービスターミナルでペアリングリクエストを承認します：
+         ```
+         openclaw devices list       # 保留中のリクエスト ID を確認
+         openclaw devices approve <requestId>
+         ```
+
+      ## 推奨リソース
+      - **CPU**：2 vCPU
+      - **メモリ**：2048 MB
+
+      ## 確認
+      デプロイ後、devbox ノードが OpenClaw に表示されていることを確認します：
+      - OpenClaw サービスターミナルで `openclaw nodes list` を実行
+      - または OpenClaw Web UI のノードページで確認
+
+      ## アーキテクチャ
+      - 公開ポートなし — devbox は WebSocket で OpenClaw gateway に発信接続します
+      - `exec.security` は `full` に設定 — コマンド実行時にインタラクティブな承認は不要
+      - システムランタイムはイメージに組み込み済み；ユーザーパッケージは永続ボリュームに保存
+
+  es-ES:
+    description: OpenClaw devbox es un nodo de ejecución remota para OpenClaw con lenguajes de programación y herramientas de desarrollo preinstalados (Python, Go, Rust, gcc, git, jq). Los paquetes instalados por el usuario se conservan mediante un volumen persistente.
+    variables:
+      - key: GATEWAY_TOKEN
+        name: Token de Gateway
+        description: El token de autenticación del Gateway de su instancia de OpenClaw
+      - key: GATEWAY_HOST
+        name: Host del Gateway
+        description: El nombre del servicio Zeabur de su instancia de OpenClaw (usado como hostname interno, ej. "openclaw")
+    readme: |
+      # OpenClaw devbox 🦞
+
+      Un nodo de ejecución remota para OpenClaw con lenguajes de programación y herramientas de desarrollo preinstalados.
+
+      ## Lenguajes y herramientas preinstalados
+      - **Python 3** (python3, pip, venv)
+      - **Node.js** (de la imagen base de OpenClaw)
+      - **Go** (golang)
+      - **Rust** (rustc, cargo)
+      - **C/C++** (gcc, g++, make, cmake)
+      - **Herramientas de desarrollo**: git, curl, wget, jq, unzip, zip
+
+      ## Paquetes persistentes del usuario
+      Los paquetes instalados por el usuario se conservan tras reinicios del contenedor:
+      - `pip install` → `~/.local/`
+      - `npm install -g` → `~/.npm-global/`
+      - `go install` → `~/go/`
+      - `cargo install` → `~/.cargo/`
+
+      ## Configuración
+      1. Despliegue esta plantilla en el **mismo proyecto Zeabur** que su instancia de OpenClaw
+      2. Ingrese el **Gateway Token** y el **Gateway Host** (el nombre del servicio Zeabur de su instancia de OpenClaw)
+      3. El nodo devbox se conectará a OpenClaw y enviará una solicitud de emparejamiento
+      4. Apruebe la solicitud de emparejamiento en la terminal de su servicio OpenClaw:
+         ```
+         openclaw devices list       # encontrar el ID de solicitud pendiente
+         openclaw devices approve <requestId>
+         ```
+
+      ## Recursos recomendados
+      - **CPU**: 2 vCPU
+      - **Memoria**: 2048 MB
+
+      ## Verificación
+      Después del despliegue, verifique que el nodo devbox aparezca en OpenClaw:
+      - Ejecute `openclaw nodes list` en la terminal de su servicio OpenClaw
+      - O consulte la página de Nodos en la interfaz web de OpenClaw
+
+      ## Arquitectura
+      - Sin puertos expuestos — el devbox inicia una conexión WebSocket saliente al gateway de OpenClaw
+      - `exec.security` está configurado como `full` — no se necesita aprobación interactiva para la ejecución de comandos
+      - Los entornos de ejecución del sistema están integrados en la imagen; los paquetes del usuario residen en el volumen persistente
+
+  id-ID:
+    description: OpenClaw devbox adalah node eksekusi jarak jauh untuk OpenClaw dengan bahasa pemrograman dan alat pengembangan yang sudah terinstal (Python, Go, Rust, gcc, git, jq). Paket yang diinstal pengguna disimpan melalui volume persisten.
+    variables:
+      - key: GATEWAY_TOKEN
+        name: Token Gateway
+        description: Token autentikasi Gateway dari instans OpenClaw Anda
+      - key: GATEWAY_HOST
+        name: Host Gateway
+        description: Nama layanan Zeabur dari instans OpenClaw Anda (digunakan sebagai hostname internal, contoh: "openclaw")
+    readme: |
+      # OpenClaw devbox 🦞
+
+      Node eksekusi jarak jauh untuk OpenClaw dengan bahasa pemrograman dan alat pengembangan yang sudah terinstal.
+
+      ## Bahasa & Alat yang Terinstal
+      - **Python 3** (python3, pip, venv)
+      - **Node.js** (dari image dasar OpenClaw)
+      - **Go** (golang)
+      - **Rust** (rustc, cargo)
+      - **C/C++** (gcc, g++, make, cmake)
+      - **Alat pengembangan**: git, curl, wget, jq, unzip, zip
+
+      ## Paket Pengguna Persisten
+      Paket yang diinstal pengguna tetap tersimpan setelah container di-restart:
+      - `pip install` → `~/.local/`
+      - `npm install -g` → `~/.npm-global/`
+      - `go install` → `~/go/`
+      - `cargo install` → `~/.cargo/`
+
+      ## Pengaturan
+      1. Deploy template ini ke **proyek Zeabur yang sama** dengan instans OpenClaw Anda
+      2. Masukkan **Gateway Token** dan **Gateway Host** (nama layanan Zeabur dari instans OpenClaw Anda)
+      3. Node devbox akan terhubung ke OpenClaw dan mengirim permintaan pairing
+      4. Setujui permintaan pairing di terminal layanan OpenClaw Anda:
+         ```
+         openclaw devices list       # temukan ID permintaan yang tertunda
+         openclaw devices approve <requestId>
+         ```
+
+      ## Rekomendasi Sumber Daya
+      - **CPU**: 2 vCPU
+      - **Memori**: 2048 MB
+
+      ## Verifikasi
+      Setelah deployment, pastikan node devbox muncul di OpenClaw:
+      - Jalankan `openclaw nodes list` di terminal layanan OpenClaw Anda
+      - Atau periksa halaman Nodes di OpenClaw Web UI
+
+      ## Arsitektur
+      - Tidak ada port yang terbuka — devbox memulai koneksi WebSocket keluar ke gateway OpenClaw
+      - `exec.security` diatur ke `full` — tidak perlu persetujuan interaktif untuk eksekusi perintah
+      - Runtime sistem sudah terpasang di dalam image; paket pengguna disimpan di volume persisten
