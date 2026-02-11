@@ -41,6 +41,17 @@ spec:
       - `go install` → `~/go/`
       - `cargo install` → `~/.cargo/`
 
+      ## Git Authentication (Optional)
+      To clone private repositories, add the following environment variables to the devbox service in the Zeabur dashboard:
+      - **`GIT_TOKEN`** — GitHub personal access token. The startup script will automatically configure HTTPS authentication. Generate one at [GitHub > Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) with `repo` scope.
+      - **`SSH_PRIVATE_KEY`** — Base64-encoded SSH private key. The startup script will automatically write it to `~/.ssh/id_rsa`.
+        Generate a key pair and encode it:
+        ```
+        ssh-keygen -t ed25519 -f ~/.ssh/openclaw_devbox -N ""
+        base64 -i ~/.ssh/openclaw_devbox    # paste this as SSH_PRIVATE_KEY
+        ```
+        Then add `~/.ssh/openclaw_devbox.pub` to your GitHub account under **Settings > SSH and GPG keys**.
+
       ## Use Cases
       - **Multi-language code execution** — Ask the AI to write and run Python, Go, Rust, or C code in the conversation
       - **Package installation & testing** — Ask the AI to install third-party packages and verify functionality (installations persist across restarts)
@@ -132,6 +143,19 @@ spec:
                 mkdir -p "$HOME/.cargo/bin"
                 mkdir -p "$HOME/workspace"
 
+                # Configure git credentials (optional)
+                if [ -n "$GIT_TOKEN" ]; then
+                  git config --global url."https://${GIT_TOKEN}@github.com/".insteadOf "https://github.com/"
+                fi
+
+                # Configure SSH key (optional, base64-encoded)
+                if [ -n "$SSH_PRIVATE_KEY" ]; then
+                  mkdir -p "$HOME/.ssh"
+                  echo "$SSH_PRIVATE_KEY" | base64 -d > "$HOME/.ssh/id_rsa"
+                  chmod 600 "$HOME/.ssh/id_rsa"
+                  ssh-keyscan github.com >> "$HOME/.ssh/known_hosts" 2>/dev/null
+                fi
+
                 # Start node host — retry on pairing rejection to avoid container restart loop
                 RETRY_DELAY=10
                 while true; do
@@ -203,6 +227,17 @@ localization:
       - `go install` → `~/go/`
       - `cargo install` → `~/.cargo/`
 
+      ## Git 認證（選用）
+      如需 clone 私有儲存庫，請在 Zeabur 控制台的 devbox 服務中加入以下環境變數：
+      - **`GIT_TOKEN`** — GitHub personal access token，啟動腳本會自動設定 HTTPS 認證。前往 [GitHub > Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) 產生，需勾選 `repo` 權限。
+      - **`SSH_PRIVATE_KEY`** — Base64 編碼的 SSH 私鑰，啟動腳本會自動寫入 `~/.ssh/id_rsa`。
+        產生金鑰並編碼：
+        ```
+        ssh-keygen -t ed25519 -f ~/.ssh/openclaw_devbox -N ""
+        base64 -i ~/.ssh/openclaw_devbox    # 將此值貼入 SSH_PRIVATE_KEY
+        ```
+        然後將 `~/.ssh/openclaw_devbox.pub` 加入 GitHub 帳號的 **Settings > SSH and GPG keys**。
+
       ## 使用案例
       - **多語言程式執行** — 在對話中請 AI 撰寫並執行 Python、Go、Rust、C 程式碼
       - **套件安裝與測試** — 請 AI 安裝第三方套件並驗證功能（安裝會持久化，重啟後仍保留）
@@ -268,6 +303,17 @@ localization:
       - `npm install -g` → `~/.npm-global/`
       - `go install` → `~/go/`
       - `cargo install` → `~/.cargo/`
+
+      ## Git 认证（可选）
+      如需 clone 私有仓库，请在 Zeabur 控制台的 devbox 服务中添加以下环境变量：
+      - **`GIT_TOKEN`** — GitHub personal access token，启动脚本会自动配置 HTTPS 认证。前往 [GitHub > Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) 生成，需勾选 `repo` 权限。
+      - **`SSH_PRIVATE_KEY`** — Base64 编码的 SSH 私钥，启动脚本会自动写入 `~/.ssh/id_rsa`。
+        生成密钥并编码：
+        ```
+        ssh-keygen -t ed25519 -f ~/.ssh/openclaw_devbox -N ""
+        base64 -i ~/.ssh/openclaw_devbox    # 将此值粘贴到 SSH_PRIVATE_KEY
+        ```
+        然后将 `~/.ssh/openclaw_devbox.pub` 添加到 GitHub 账号的 **Settings > SSH and GPG keys**。
 
       ## 使用案例
       - **多语言程序执行** — 在对话中请 AI 编写并执行 Python、Go、Rust、C 代码
@@ -335,6 +381,17 @@ localization:
       - `go install` → `~/go/`
       - `cargo install` → `~/.cargo/`
 
+      ## Git 認証（オプション）
+      プライベートリポジトリをクローンするには、Zeabur ダッシュボードの devbox サービスに以下の環境変数を追加してください：
+      - **`GIT_TOKEN`** — GitHub personal access token。起動スクリプトが自動的に HTTPS 認証を設定します。[GitHub > Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) で `repo` スコープを有効にして生成してください。
+      - **`SSH_PRIVATE_KEY`** — Base64 エンコードされた SSH 秘密鍵。起動スクリプトが自動的に `~/.ssh/id_rsa` に書き込みます。
+        鍵ペアの生成とエンコード：
+        ```
+        ssh-keygen -t ed25519 -f ~/.ssh/openclaw_devbox -N ""
+        base64 -i ~/.ssh/openclaw_devbox    # この値を SSH_PRIVATE_KEY に貼り付け
+        ```
+        `~/.ssh/openclaw_devbox.pub` を GitHub アカウントの **Settings > SSH and GPG keys** に追加してください。
+
       ## ユースケース
       - **多言語コード実行** — 会話で AI に Python、Go、Rust、C のコードを書いて実行してもらう
       - **パッケージのインストールとテスト** — AI にサードパーティパッケージをインストールして機能を検証してもらう（インストールは再起動後も保持）
@@ -401,6 +458,17 @@ localization:
       - `go install` → `~/go/`
       - `cargo install` → `~/.cargo/`
 
+      ## Autenticación Git (opcional)
+      Para clonar repositorios privados, agregue las siguientes variables de entorno al servicio devbox en el panel de Zeabur:
+      - **`GIT_TOKEN`** — GitHub personal access token. El script de inicio configurará automáticamente la autenticación HTTPS. Genere uno en [GitHub > Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) con el alcance `repo`.
+      - **`SSH_PRIVATE_KEY`** — Clave SSH privada codificada en Base64. El script de inicio la escribirá automáticamente en `~/.ssh/id_rsa`.
+        Genere un par de claves y codifíquelo:
+        ```
+        ssh-keygen -t ed25519 -f ~/.ssh/openclaw_devbox -N ""
+        base64 -i ~/.ssh/openclaw_devbox    # pegue este valor en SSH_PRIVATE_KEY
+        ```
+        Luego agregue `~/.ssh/openclaw_devbox.pub` a su cuenta de GitHub en **Settings > SSH and GPG keys**.
+
       ## Casos de uso
       - **Ejecución de código multilenguaje** — Pida a la IA que escriba y ejecute código en Python, Go, Rust o C en la conversación
       - **Instalación y prueba de paquetes** — Pida a la IA que instale paquetes de terceros y verifique su funcionalidad (las instalaciones persisten tras reinicios)
@@ -466,6 +534,17 @@ localization:
       - `npm install -g` → `~/.npm-global/`
       - `go install` → `~/go/`
       - `cargo install` → `~/.cargo/`
+
+      ## Autentikasi Git (Opsional)
+      Untuk meng-clone repositori privat, tambahkan variabel lingkungan berikut ke layanan devbox di dashboard Zeabur:
+      - **`GIT_TOKEN`** — GitHub personal access token. Skrip startup akan otomatis mengonfigurasi autentikasi HTTPS. Buat di [GitHub > Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens) dengan scope `repo`.
+      - **`SSH_PRIVATE_KEY`** — Kunci SSH privat yang di-encode Base64. Skrip startup akan otomatis menulisnya ke `~/.ssh/id_rsa`.
+        Buat pasangan kunci dan encode:
+        ```
+        ssh-keygen -t ed25519 -f ~/.ssh/openclaw_devbox -N ""
+        base64 -i ~/.ssh/openclaw_devbox    # tempel nilai ini sebagai SSH_PRIVATE_KEY
+        ```
+        Lalu tambahkan `~/.ssh/openclaw_devbox.pub` ke akun GitHub Anda di **Settings > SSH and GPG keys**.
 
       ## Kasus Penggunaan
       - **Eksekusi kode multi-bahasa** — Minta AI menulis dan menjalankan kode Python, Go, Rust, atau C dalam percakapan
