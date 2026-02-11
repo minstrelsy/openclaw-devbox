@@ -42,10 +42,11 @@ spec:
       - `cargo install` → `~/.cargo/`
 
       ## Setup
-      1. Deploy this template to the **same Zeabur project** as your OpenClaw instance
-      2. Enter the **Gateway Token** and **Gateway Host** (the Zeabur service name of your OpenClaw instance)
-      3. The devbox node will connect to OpenClaw and send a pairing request
-      4. Approve the pairing request in your OpenClaw service terminal:
+      1. Copy the **Gateway Token** from your OpenClaw service's **Instructions** tab before deploying, so you can paste it easily during setup
+      2. Deploy this template to the **same Zeabur project** as your OpenClaw instance
+      3. Enter the **Gateway Token** and **Gateway Host** (the Zeabur service name of your OpenClaw instance, e.g. if the service is named `openclaw`, enter `openclaw`)
+      4. The devbox node will connect to OpenClaw and send a pairing request
+      5. Approve the pairing request in your OpenClaw service terminal:
          ```
          openclaw devices list       # find the pending request ID
          openclaw devices approve <requestId>
@@ -64,6 +65,10 @@ spec:
       - No exposed ports — the devbox initiates an outbound WebSocket connection to the OpenClaw gateway
       - `exec.security` is set to `full` — no interactive approval needed for command execution
       - System runtimes are baked into the image; user packages live on the persistent volume
+
+      ## Troubleshooting
+      - If you have entered the **Gateway Host** but don't see a pending pairing request in `openclaw devices list`, the service name might be incorrect. Go to the **Networking** tab of your OpenClaw service in the Zeabur dashboard and check the private hostname. For example, if the private hostname is `openclaw.zeabur.internal`, then the Gateway Host should be `openclaw` (the part before `.zeabur.internal`).
+      - If the devbox service has not successfully paired for a long time, Zeabur may automatically suspend it. Make sure the devbox service is **running** before attempting to pair.
 
     services:
       - name: openclaw-devbox
@@ -105,15 +110,15 @@ spec:
                   chmod 600 "$CONFIG_FILE"
                 fi
 
+                # Ensure user-level directories exist on persistent volume
+                mkdir -p "$HOME/.local/bin"
+
                 # Create openclaw CLI wrapper
                 cat > "$HOME/.local/bin/openclaw" << 'WRAPPER'
                 #!/bin/sh
                 exec node /app/dist/index.js "$@"
                 WRAPPER
                 chmod +x "$HOME/.local/bin/openclaw"
-
-                # Ensure user-level directories exist on persistent volume
-                mkdir -p "$HOME/.local/bin"
                 mkdir -p "$HOME/.npm-global"
                 mkdir -p "$HOME/go/bin"
                 mkdir -p "$HOME/.cargo/bin"
@@ -191,10 +196,11 @@ localization:
       - `cargo install` → `~/.cargo/`
 
       ## 設定步驟
-      1. 將此模板部署到與您的 OpenClaw 實例**相同的 Zeabur 專案**
-      2. 輸入 **Gateway Token** 和 **Gateway Host**（您的 OpenClaw 實例的 Zeabur 服務名稱）
-      3. devbox 節點將連線至 OpenClaw 並發送配對請求
-      4. 在您的 OpenClaw 服務終端中批准配對請求：
+      1. 部署前，先從 OpenClaw 服務的**使用說明**分頁中複製 **Gateway Token**，方便後續輸入
+      2. 將此模板部署到與您的 OpenClaw 實例**相同的 Zeabur 專案**
+      3. 輸入 **Gateway Token** 和 **Gateway Host**（您的 OpenClaw 實例的 Zeabur 服務名稱，例如服務名稱為 `openclaw`，則填入 `openclaw`）
+      4. devbox 節點將連線至 OpenClaw 並發送配對請求
+      5. 在您的 OpenClaw 服務終端中批准配對請求：
          ```
          openclaw devices list       # 找到待處理的請求 ID
          openclaw devices approve <requestId>
@@ -213,6 +219,10 @@ localization:
       - 無對外公開端口 — devbox 透過 WebSocket 主動連線至 OpenClaw gateway
       - `exec.security` 設為 `full` — 執行指令時無需互動式批准
       - 系統執行環境內建於映像檔中；使用者套件儲存在持久化磁碟上
+
+      ## 疑難排解
+      - 如果已輸入 **Gateway Host** 但在 `openclaw devices list` 中看不到等待配對的請求，可能是服務名稱填寫錯誤。請前往 Zeabur 控制台中 OpenClaw 服務的**網路**分頁，查看內網名稱。例如內網名稱為 `openclaw.zeabur.internal`，則 Gateway Host 應填入 `openclaw`（`.zeabur.internal` 前面的部分）。
+      - 如果 devbox 服務長時間未成功配對，Zeabur 可能會自動暫停該服務。請在嘗試配對前確認 devbox 服務處於**執行中**狀態。
 
   zh-CN:
     description: OpenClaw devbox 是 OpenClaw 的远程执行节点，预装多种编程语言与开发工具（Python、Go、Rust、gcc、git、jq）。用户安装的包通过持久化磁盘保留。
@@ -244,10 +254,11 @@ localization:
       - `cargo install` → `~/.cargo/`
 
       ## 设置步骤
-      1. 将此模板部署到与您的 OpenClaw 实例**相同的 Zeabur 项目**
-      2. 输入 **Gateway Token** 和 **Gateway Host**（您的 OpenClaw 实例的 Zeabur 服务名称）
-      3. devbox 节点将连接至 OpenClaw 并发送配对请求
-      4. 在您的 OpenClaw 服务终端中批准配对请求：
+      1. 部署前，先从 OpenClaw 服务的**操作说明**标签页中复制 **Gateway Token**，方便后续输入
+      2. 将此模板部署到与您的 OpenClaw 实例**相同的 Zeabur 项目**
+      3. 输入 **Gateway Token** 和 **Gateway Host**（您的 OpenClaw 实例的 Zeabur 服务名称，例如服务名称为 `openclaw`，则填入 `openclaw`）
+      4. devbox 节点将连接至 OpenClaw 并发送配对请求
+      5. 在您的 OpenClaw 服务终端中批准配对请求：
          ```
          openclaw devices list       # 找到待处理的请求 ID
          openclaw devices approve <requestId>
@@ -266,6 +277,10 @@ localization:
       - 无对外公开端口 — devbox 通过 WebSocket 主动连接至 OpenClaw gateway
       - `exec.security` 设为 `full` — 执行命令时无需交互式批准
       - 系统运行环境内置于镜像中；用户包存储在持久化磁盘上
+
+      ## 疑难排解
+      - 如果已输入 **Gateway Host** 但在 `openclaw devices list` 中看不到等待配对的请求，可能是服务名称填写错误。请前往 Zeabur 控制台中 OpenClaw 服务的**网络**标签页，查看内网名称。例如内网名称为 `openclaw.zeabur.internal`，则 Gateway Host 应填入 `openclaw`（`.zeabur.internal` 前面的部分）。
+      - 如果 devbox 服务长时间未成功配对，Zeabur 可能会自动暂停该服务。请在尝试配对前确认 devbox 服务处于**运行中**状态。
 
   ja-JP:
     description: OpenClaw devbox は OpenClaw のリモート実行ノードで、プログラミング言語と開発ツール（Python、Go、Rust、gcc、git、jq）がプリインストールされています。ユーザーがインストールしたパッケージは永続ボリュームにより保持されます。
@@ -297,10 +312,11 @@ localization:
       - `cargo install` → `~/.cargo/`
 
       ## セットアップ
-      1. このテンプレートを OpenClaw インスタンスと**同じ Zeabur プロジェクト**にデプロイします
-      2. **Gateway Token** と **Gateway Host**（OpenClaw インスタンスの Zeabur サービス名）を入力します
-      3. devbox ノードが OpenClaw に接続し、ペアリングリクエストを送信します
-      4. OpenClaw サービスターミナルでペアリングリクエストを承認します：
+      1. デプロイ前に、OpenClaw サービスの**指示**タブから **Gateway Token** をコピーしておくと、入力がスムーズです
+      2. このテンプレートを OpenClaw インスタンスと**同じ Zeabur プロジェクト**にデプロイします
+      3. **Gateway Token** と **Gateway Host**（OpenClaw インスタンスの Zeabur サービス名、例えばサービス名が `openclaw` の場合は `openclaw` と入力）を入力します
+      4. devbox ノードが OpenClaw に接続し、ペアリングリクエストを送信します
+      5. OpenClaw サービスターミナルでペアリングリクエストを承認します：
          ```
          openclaw devices list       # 保留中のリクエスト ID を確認
          openclaw devices approve <requestId>
@@ -319,6 +335,10 @@ localization:
       - 公開ポートなし — devbox は WebSocket で OpenClaw gateway に発信接続します
       - `exec.security` は `full` に設定 — コマンド実行時にインタラクティブな承認は不要
       - システムランタイムはイメージに組み込み済み；ユーザーパッケージは永続ボリュームに保存
+
+      ## トラブルシューティング
+      - **Gateway Host** を入力しても `openclaw devices list` にペアリングリクエストが表示されない場合、サービス名が正しくない可能性があります。Zeabur ダッシュボードで OpenClaw サービスの**ネットワーク**タブを開き、プライベートホスト名を確認してください。例えばプライベートホスト名が `openclaw.zeabur.internal` の場合、Gateway Host には `openclaw`（`.zeabur.internal` の前の部分）を入力してください。
+      - devbox サービスが長時間ペアリングに成功しない場合、Zeabur が自動的にサービスを一時停止することがあります。ペアリングを試みる前に、devbox サービスが**実行中**であることを確認してください。
 
   es-ES:
     description: OpenClaw devbox es un nodo de ejecución remota para OpenClaw con lenguajes de programación y herramientas de desarrollo preinstalados (Python, Go, Rust, gcc, git, jq). Los paquetes instalados por el usuario se conservan mediante un volumen persistente.
@@ -350,10 +370,11 @@ localization:
       - `cargo install` → `~/.cargo/`
 
       ## Configuración
-      1. Despliegue esta plantilla en el **mismo proyecto Zeabur** que su instancia de OpenClaw
-      2. Ingrese el **Gateway Token** y el **Gateway Host** (el nombre del servicio Zeabur de su instancia de OpenClaw)
-      3. El nodo devbox se conectará a OpenClaw y enviará una solicitud de emparejamiento
-      4. Apruebe la solicitud de emparejamiento en la terminal de su servicio OpenClaw:
+      1. Antes de desplegar, copie el **Gateway Token** de la pestaña **Instrucciones** de su servicio OpenClaw para facilitar la entrada
+      2. Despliegue esta plantilla en el **mismo proyecto Zeabur** que su instancia de OpenClaw
+      3. Ingrese el **Gateway Token** y el **Gateway Host** (el nombre del servicio Zeabur de su instancia de OpenClaw, por ejemplo, si el servicio se llama `openclaw`, ingrese `openclaw`)
+      4. El nodo devbox se conectará a OpenClaw y enviará una solicitud de emparejamiento
+      5. Apruebe la solicitud de emparejamiento en la terminal de su servicio OpenClaw:
          ```
          openclaw devices list       # encontrar el ID de solicitud pendiente
          openclaw devices approve <requestId>
@@ -373,6 +394,10 @@ localization:
       - `exec.security` está configurado como `full` — no se necesita aprobación interactiva para la ejecución de comandos
       - Los entornos de ejecución del sistema están integrados en la imagen; los paquetes del usuario residen en el volumen persistente
 
+      ## Solución de problemas
+      - Si ha ingresado el **Gateway Host** pero no ve una solicitud de emparejamiento pendiente en `openclaw devices list`, es posible que el nombre del servicio sea incorrecto. Vaya a la pestaña **Red** del servicio OpenClaw en el panel de Zeabur y verifique el hostname privado. Por ejemplo, si el hostname privado es `openclaw.zeabur.internal`, entonces el Gateway Host debe ser `openclaw` (la parte antes de `.zeabur.internal`).
+      - Si el servicio devbox no ha logrado emparejarse durante mucho tiempo, Zeabur puede suspenderlo automáticamente. Asegúrese de que el servicio devbox esté **en ejecución** antes de intentar el emparejamiento.
+
   id-ID:
     description: OpenClaw devbox adalah node eksekusi jarak jauh untuk OpenClaw dengan bahasa pemrograman dan alat pengembangan yang sudah terinstal (Python, Go, Rust, gcc, git, jq). Paket yang diinstal pengguna disimpan melalui volume persisten.
     variables:
@@ -381,7 +406,7 @@ localization:
         description: Token autentikasi Gateway dari instans OpenClaw Anda
       - key: GATEWAY_HOST
         name: Host Gateway
-        description: Nama layanan Zeabur dari instans OpenClaw Anda (digunakan sebagai hostname internal, contoh: "openclaw")
+        description: "Nama layanan Zeabur dari instans OpenClaw Anda (digunakan sebagai hostname internal, contoh: openclaw)"
     readme: |
       # OpenClaw devbox 🦞
 
@@ -403,10 +428,11 @@ localization:
       - `cargo install` → `~/.cargo/`
 
       ## Pengaturan
-      1. Deploy template ini ke **proyek Zeabur yang sama** dengan instans OpenClaw Anda
-      2. Masukkan **Gateway Token** dan **Gateway Host** (nama layanan Zeabur dari instans OpenClaw Anda)
-      3. Node devbox akan terhubung ke OpenClaw dan mengirim permintaan pairing
-      4. Setujui permintaan pairing di terminal layanan OpenClaw Anda:
+      1. Sebelum deploy, salin **Gateway Token** dari tab **Instruksi** layanan OpenClaw Anda agar mudah dimasukkan nanti
+      2. Deploy template ini ke **proyek Zeabur yang sama** dengan instans OpenClaw Anda
+      3. Masukkan **Gateway Token** dan **Gateway Host** (nama layanan Zeabur dari instans OpenClaw Anda, misalnya jika layanan bernama `openclaw`, masukkan `openclaw`)
+      4. Node devbox akan terhubung ke OpenClaw dan mengirim permintaan pairing
+      5. Setujui permintaan pairing di terminal layanan OpenClaw Anda:
          ```
          openclaw devices list       # temukan ID permintaan yang tertunda
          openclaw devices approve <requestId>
@@ -425,3 +451,7 @@ localization:
       - Tidak ada port yang terbuka — devbox memulai koneksi WebSocket keluar ke gateway OpenClaw
       - `exec.security` diatur ke `full` — tidak perlu persetujuan interaktif untuk eksekusi perintah
       - Runtime sistem sudah terpasang di dalam image; paket pengguna disimpan di volume persisten
+
+      ## Pemecahan Masalah
+      - Jika Anda sudah memasukkan **Gateway Host** tetapi tidak melihat permintaan pairing yang tertunda di `openclaw devices list`, kemungkinan nama layanan salah. Buka tab **Jaringan** pada layanan OpenClaw di dashboard Zeabur dan periksa hostname privat. Misalnya, jika hostname privat adalah `openclaw.zeabur.internal`, maka Gateway Host harus diisi `openclaw` (bagian sebelum `.zeabur.internal`).
+      - Jika layanan devbox tidak berhasil pairing dalam waktu lama, Zeabur dapat menangguhkannya secara otomatis. Pastikan layanan devbox dalam status **berjalan** sebelum mencoba pairing.
