@@ -41,6 +41,13 @@ spec:
       - `go install` → `~/go/`
       - `cargo install` → `~/.cargo/`
 
+      ## Use Cases
+      - **Multi-language code execution** — Ask the AI to write and run Python, Go, Rust, or C code in the conversation
+      - **Package installation & testing** — Ask the AI to install third-party packages and verify functionality (installations persist across restarts)
+      - **Data processing & analysis** — Upload data files and have the AI process, transform, or analyze them with Python or jq
+      - **Git operations & project builds** — Clone repositories, build projects, and run tests
+      - **System automation scripts** — Write and test shell scripts and automation tools
+
       ## Setup
       1. Copy the **Gateway Token** from your OpenClaw service's **Instructions** tab before deploying, so you can paste it easily during setup
       2. Deploy this template to the **same Zeabur project** as your OpenClaw instance
@@ -60,6 +67,7 @@ spec:
       After deployment, check that the devbox node appears in OpenClaw:
       - Run `openclaw nodes list` in your OpenClaw service terminal
       - Or check the Nodes page in the OpenClaw Web UI
+      - Or simply ask in the conversation: "Can you see the devbox node?"
 
       ## Architecture
       - No exposed ports — the devbox initiates an outbound WebSocket connection to the OpenClaw gateway
@@ -195,6 +203,13 @@ localization:
       - `go install` → `~/go/`
       - `cargo install` → `~/.cargo/`
 
+      ## 使用案例
+      - **多語言程式執行** — 在對話中請 AI 撰寫並執行 Python、Go、Rust、C 程式碼
+      - **套件安裝與測試** — 請 AI 安裝第三方套件並驗證功能（安裝會持久化，重啟後仍保留）
+      - **資料處理與分析** — 上傳資料檔，請 AI 用 Python 或 jq 處理、轉換、分析
+      - **Git 操作與專案建置** — Clone 儲存庫、建置專案、執行測試
+      - **系統自動化腳本** — 撰寫和測試 shell script 與自動化工具
+
       ## 設定步驟
       1. 部署前，先從 OpenClaw 服務的**使用說明**分頁中複製 **Gateway Token**，方便後續輸入
       2. 將此模板部署到與您的 OpenClaw 實例**相同的 Zeabur 專案**
@@ -214,6 +229,7 @@ localization:
       部署後，確認 devbox 節點已出現在 OpenClaw 中：
       - 在 OpenClaw 服務終端中執行 `openclaw nodes list`
       - 或在 OpenClaw Web UI 的節點頁面中查看
+      - 或直接在對話中詢問：「你現在有看到 devbox 的 node 嗎？」
 
       ## 架構
       - 無對外公開端口 — devbox 透過 WebSocket 主動連線至 OpenClaw gateway
@@ -253,6 +269,13 @@ localization:
       - `go install` → `~/go/`
       - `cargo install` → `~/.cargo/`
 
+      ## 使用案例
+      - **多语言程序执行** — 在对话中请 AI 编写并执行 Python、Go、Rust、C 代码
+      - **包安装与测试** — 请 AI 安装第三方包并验证功能（安装会持久化，重启后仍保留）
+      - **数据处理与分析** — 上传数据文件，请 AI 用 Python 或 jq 处理、转换、分析
+      - **Git 操作与项目构建** — Clone 仓库、构建项目、运行测试
+      - **系统自动化脚本** — 编写和测试 shell script 与自动化工具
+
       ## 设置步骤
       1. 部署前，先从 OpenClaw 服务的**操作说明**标签页中复制 **Gateway Token**，方便后续输入
       2. 将此模板部署到与您的 OpenClaw 实例**相同的 Zeabur 项目**
@@ -272,6 +295,7 @@ localization:
       部署后，确认 devbox 节点已出现在 OpenClaw 中：
       - 在 OpenClaw 服务终端中执行 `openclaw nodes list`
       - 或在 OpenClaw Web UI 的节点页面中查看
+      - 或直接在对话中询问："你现在有看到 devbox 的 node 吗？"
 
       ## 架构
       - 无对外公开端口 — devbox 通过 WebSocket 主动连接至 OpenClaw gateway
@@ -311,6 +335,13 @@ localization:
       - `go install` → `~/go/`
       - `cargo install` → `~/.cargo/`
 
+      ## ユースケース
+      - **多言語コード実行** — 会話で AI に Python、Go、Rust、C のコードを書いて実行してもらう
+      - **パッケージのインストールとテスト** — AI にサードパーティパッケージをインストールして機能を検証してもらう（インストールは再起動後も保持）
+      - **データ処理と分析** — データファイルをアップロードし、AI に Python や jq で処理・変換・分析してもらう
+      - **Git 操作とプロジェクトビルド** — リポジトリのクローン、プロジェクトのビルド、テストの実行
+      - **システム自動化スクリプト** — シェルスクリプトや自動化ツールの作成とテスト
+
       ## セットアップ
       1. デプロイ前に、OpenClaw サービスの**指示**タブから **Gateway Token** をコピーしておくと、入力がスムーズです
       2. このテンプレートを OpenClaw インスタンスと**同じ Zeabur プロジェクト**にデプロイします
@@ -330,6 +361,7 @@ localization:
       デプロイ後、devbox ノードが OpenClaw に表示されていることを確認します：
       - OpenClaw サービスターミナルで `openclaw nodes list` を実行
       - または OpenClaw Web UI のノードページで確認
+      - または会話で直接聞く：「devbox の node は見えますか？」
 
       ## アーキテクチャ
       - 公開ポートなし — devbox は WebSocket で OpenClaw gateway に発信接続します
@@ -369,6 +401,13 @@ localization:
       - `go install` → `~/go/`
       - `cargo install` → `~/.cargo/`
 
+      ## Casos de uso
+      - **Ejecución de código multilenguaje** — Pida a la IA que escriba y ejecute código en Python, Go, Rust o C en la conversación
+      - **Instalación y prueba de paquetes** — Pida a la IA que instale paquetes de terceros y verifique su funcionalidad (las instalaciones persisten tras reinicios)
+      - **Procesamiento y análisis de datos** — Suba archivos de datos y pida a la IA que los procese, transforme o analice con Python o jq
+      - **Operaciones Git y compilación de proyectos** — Clone repositorios, compile proyectos y ejecute pruebas
+      - **Scripts de automatización del sistema** — Escriba y pruebe scripts de shell y herramientas de automatización
+
       ## Configuración
       1. Antes de desplegar, copie el **Gateway Token** de la pestaña **Instrucciones** de su servicio OpenClaw para facilitar la entrada
       2. Despliegue esta plantilla en el **mismo proyecto Zeabur** que su instancia de OpenClaw
@@ -388,6 +427,7 @@ localization:
       Después del despliegue, verifique que el nodo devbox aparezca en OpenClaw:
       - Ejecute `openclaw nodes list` en la terminal de su servicio OpenClaw
       - O consulte la página de Nodos en la interfaz web de OpenClaw
+      - O simplemente pregunte en la conversación: "Can you see the devbox node?"
 
       ## Arquitectura
       - Sin puertos expuestos — el devbox inicia una conexión WebSocket saliente al gateway de OpenClaw
@@ -427,6 +467,13 @@ localization:
       - `go install` → `~/go/`
       - `cargo install` → `~/.cargo/`
 
+      ## Kasus Penggunaan
+      - **Eksekusi kode multi-bahasa** — Minta AI menulis dan menjalankan kode Python, Go, Rust, atau C dalam percakapan
+      - **Instalasi dan pengujian paket** — Minta AI menginstal paket pihak ketiga dan memverifikasi fungsionalitasnya (instalasi tetap tersimpan setelah restart)
+      - **Pemrosesan dan analisis data** — Unggah file data dan minta AI memprosesnya dengan Python atau jq
+      - **Operasi Git dan build proyek** — Clone repositori, build proyek, dan jalankan pengujian
+      - **Skrip otomasi sistem** — Tulis dan uji shell script dan alat otomasi
+
       ## Pengaturan
       1. Sebelum deploy, salin **Gateway Token** dari tab **Instruksi** layanan OpenClaw Anda agar mudah dimasukkan nanti
       2. Deploy template ini ke **proyek Zeabur yang sama** dengan instans OpenClaw Anda
@@ -446,6 +493,7 @@ localization:
       Setelah deployment, pastikan node devbox muncul di OpenClaw:
       - Jalankan `openclaw nodes list` di terminal layanan OpenClaw Anda
       - Atau periksa halaman Nodes di OpenClaw Web UI
+      - Atau tanyakan langsung dalam percakapan: "Can you see the devbox node?"
 
       ## Arsitektur
       - Tidak ada port yang terbuka — devbox memulai koneksi WebSocket keluar ke gateway OpenClaw
