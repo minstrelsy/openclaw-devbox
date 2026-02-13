@@ -5,7 +5,7 @@ metadata:
     name: OpenClaw devbox 🦞
 spec:
     description: |
-      OpenClaw devbox is a remote execution node for OpenClaw with programming languages and dev tools pre-installed (Python, Go, Rust, gcc, git, jq). User-installed packages persist across restarts via a persistent volume.
+      OpenClaw devbox is an extension node for the OpenClaw main application, providing a remote execution environment with programming languages and dev tools pre-installed (Python, Go, Rust, gcc, git, jq). User-installed packages persist across restarts via a persistent volume.
     icon: https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/pixel-lobster.svg
     coverImage: https://raw.githubusercontent.com/openclaw/openclaw/main/docs/assets/openclaw-logo-text.png
     variables:
@@ -24,7 +24,7 @@ spec:
     readme: |
       # OpenClaw devbox 🦞
 
-      A remote execution node for OpenClaw with programming languages and dev tools pre-installed.
+      An extension node for the OpenClaw main application, providing a remote execution environment with programming languages and dev tools pre-installed.
 
       ## Pre-installed Languages & Tools
       - **Python 3** (python3, pip, venv)
@@ -58,6 +58,9 @@ spec:
       - **Data processing & analysis** — Upload data files and have the AI process, transform, or analyze them with Python or jq
       - **Git operations & project builds** — Clone repositories, build projects, and run tests
       - **System automation scripts** — Write and test shell scripts and automation tools
+
+      ## Prerequisites
+      You need a running OpenClaw instance first. If you don't have one yet, deploy the [OpenClaw main application template](https://zeabur.com/templates/VTZ4FX).
 
       ## Setup
       1. Copy the **Gateway Token** from your OpenClaw service's **Instructions** tab before deploying, so you can paste it easily during setup
@@ -199,7 +202,7 @@ spec:
 
 localization:
   zh-TW:
-    description: OpenClaw devbox 是 OpenClaw 的遠端執行節點，預裝多種程式語言與開發工具（Python、Go、Rust、gcc、git、jq）。使用者安裝的套件透過持久化磁碟保留。
+    description: OpenClaw devbox 是 OpenClaw 主程式的擴充節點，提供預裝多種程式語言與開發工具（Python、Go、Rust、gcc、git、jq）的遠端執行環境。使用者安裝的套件透過持久化磁碟保留。
     variables:
       - key: GATEWAY_TOKEN
         name: Gateway Token
@@ -210,7 +213,7 @@ localization:
     readme: |
       # OpenClaw devbox 🦞
 
-      OpenClaw 的遠端執行節點，預裝多種程式語言與開發工具。
+      OpenClaw 主程式的擴充節點，提供預裝多種程式語言與開發工具的遠端執行環境。
 
       ## 預裝語言與工具
       - **Python 3**（python3、pip、venv）
@@ -245,6 +248,9 @@ localization:
       - **Git 操作與專案建置** — Clone 儲存庫、建置專案、執行測試
       - **系統自動化腳本** — 撰寫和測試 shell script 與自動化工具
 
+      ## 前置需求
+      您需要先有一個運行中的 OpenClaw 實例。如果還沒有，請先部署 [OpenClaw 主程式模板](https://zeabur.com/templates/VTZ4FX)。
+
       ## 設定步驟
       1. 部署前，先從 OpenClaw 服務的**使用說明**分頁中複製 **Gateway Token**，方便後續輸入
       2. 將此模板部署到與您的 OpenClaw 實例**相同的 Zeabur 專案**
@@ -276,7 +282,7 @@ localization:
       - 如果 devbox 服務長時間未成功配對，Zeabur 可能會自動暫停該服務。請在嘗試配對前確認 devbox 服務處於**執行中**狀態。
 
   zh-CN:
-    description: OpenClaw devbox 是 OpenClaw 的远程执行节点，预装多种编程语言与开发工具（Python、Go、Rust、gcc、git、jq）。用户安装的包通过持久化磁盘保留。
+    description: OpenClaw devbox 是 OpenClaw 主程序的扩展节点，提供预装多种编程语言与开发工具（Python、Go、Rust、gcc、git、jq）的远程执行环境。用户安装的包通过持久化磁盘保留。
     variables:
       - key: GATEWAY_TOKEN
         name: Gateway Token
@@ -287,7 +293,7 @@ localization:
     readme: |
       # OpenClaw devbox 🦞
 
-      OpenClaw 的远程执行节点，预装多种编程语言与开发工具。
+      OpenClaw 主程序的扩展节点，提供预装多种编程语言与开发工具的远程执行环境。
 
       ## 预装语言与工具
       - **Python 3**（python3、pip、venv）
@@ -322,6 +328,9 @@ localization:
       - **Git 操作与项目构建** — Clone 仓库、构建项目、运行测试
       - **系统自动化脚本** — 编写和测试 shell script 与自动化工具
 
+      ## 前置要求
+      您需要先有一个运行中的 OpenClaw 实例。如果还没有，请先部署 [OpenClaw 主程序模板](https://zeabur.com/templates/VTZ4FX)。
+
       ## 设置步骤
       1. 部署前，先从 OpenClaw 服务的**操作说明**标签页中复制 **Gateway Token**，方便后续输入
       2. 将此模板部署到与您的 OpenClaw 实例**相同的 Zeabur 项目**
@@ -353,7 +362,7 @@ localization:
       - 如果 devbox 服务长时间未成功配对，Zeabur 可能会自动暂停该服务。请在尝试配对前确认 devbox 服务处于**运行中**状态。
 
   ja-JP:
-    description: OpenClaw devbox は OpenClaw のリモート実行ノードで、プログラミング言語と開発ツール（Python、Go、Rust、gcc、git、jq）がプリインストールされています。ユーザーがインストールしたパッケージは永続ボリュームにより保持されます。
+    description: OpenClaw devbox は OpenClaw メインアプリケーションの拡張ノードで、プログラミング言語と開発ツール（Python、Go、Rust、gcc、git、jq）がプリインストールされたリモート実行環境を提供します。ユーザーがインストールしたパッケージは永続ボリュームにより保持されます。
     variables:
       - key: GATEWAY_TOKEN
         name: Gateway トークン
@@ -364,7 +373,7 @@ localization:
     readme: |
       # OpenClaw devbox 🦞
 
-      プログラミング言語と開発ツールがプリインストールされた OpenClaw のリモート実行ノード。
+      OpenClaw メインアプリケーションの拡張ノード。プログラミング言語と開発ツールがプリインストールされたリモート実行環境を提供します。
 
       ## プリインストール済み言語・ツール
       - **Python 3**（python3、pip、venv）
@@ -399,6 +408,9 @@ localization:
       - **Git 操作とプロジェクトビルド** — リポジトリのクローン、プロジェクトのビルド、テストの実行
       - **システム自動化スクリプト** — シェルスクリプトや自動化ツールの作成とテスト
 
+      ## 前提条件
+      まず OpenClaw インスタンスが稼働している必要があります。まだお持ちでない場合は、先に [OpenClaw メインアプリケーションテンプレート](https://zeabur.com/templates/VTZ4FX) をデプロイしてください。
+
       ## セットアップ
       1. デプロイ前に、OpenClaw サービスの**指示**タブから **Gateway Token** をコピーしておくと、入力がスムーズです
       2. このテンプレートを OpenClaw インスタンスと**同じ Zeabur プロジェクト**にデプロイします
@@ -430,7 +442,7 @@ localization:
       - devbox サービスが長時間ペアリングに成功しない場合、Zeabur が自動的にサービスを一時停止することがあります。ペアリングを試みる前に、devbox サービスが**実行中**であることを確認してください。
 
   es-ES:
-    description: OpenClaw devbox es un nodo de ejecución remota para OpenClaw con lenguajes de programación y herramientas de desarrollo preinstalados (Python, Go, Rust, gcc, git, jq). Los paquetes instalados por el usuario se conservan mediante un volumen persistente.
+    description: OpenClaw devbox es un nodo de extensión para la aplicación principal de OpenClaw, que proporciona un entorno de ejecución remota con lenguajes de programación y herramientas de desarrollo preinstalados (Python, Go, Rust, gcc, git, jq). Los paquetes instalados por el usuario se conservan mediante un volumen persistente.
     variables:
       - key: GATEWAY_TOKEN
         name: Token de Gateway
@@ -441,7 +453,7 @@ localization:
     readme: |
       # OpenClaw devbox 🦞
 
-      Un nodo de ejecución remota para OpenClaw con lenguajes de programación y herramientas de desarrollo preinstalados.
+      Nodo de extensión para la aplicación principal de OpenClaw, que proporciona un entorno de ejecución remota con lenguajes de programación y herramientas de desarrollo preinstalados.
 
       ## Lenguajes y herramientas preinstalados
       - **Python 3** (python3, pip, venv)
@@ -476,6 +488,9 @@ localization:
       - **Operaciones Git y compilación de proyectos** — Clone repositorios, compile proyectos y ejecute pruebas
       - **Scripts de automatización del sistema** — Escriba y pruebe scripts de shell y herramientas de automatización
 
+      ## Requisitos previos
+      Necesita una instancia de OpenClaw en ejecución. Si aún no tiene una, despliegue primero la [plantilla principal de OpenClaw](https://zeabur.com/templates/VTZ4FX).
+
       ## Configuración
       1. Antes de desplegar, copie el **Gateway Token** de la pestaña **Instrucciones** de su servicio OpenClaw para facilitar la entrada
       2. Despliegue esta plantilla en el **mismo proyecto Zeabur** que su instancia de OpenClaw
@@ -507,7 +522,7 @@ localization:
       - Si el servicio devbox no ha logrado emparejarse durante mucho tiempo, Zeabur puede suspenderlo automáticamente. Asegúrese de que el servicio devbox esté **en ejecución** antes de intentar el emparejamiento.
 
   id-ID:
-    description: OpenClaw devbox adalah node eksekusi jarak jauh untuk OpenClaw dengan bahasa pemrograman dan alat pengembangan yang sudah terinstal (Python, Go, Rust, gcc, git, jq). Paket yang diinstal pengguna disimpan melalui volume persisten.
+    description: OpenClaw devbox adalah node ekstensi untuk aplikasi utama OpenClaw, menyediakan lingkungan eksekusi jarak jauh dengan bahasa pemrograman dan alat pengembangan yang sudah terinstal (Python, Go, Rust, gcc, git, jq). Paket yang diinstal pengguna disimpan melalui volume persisten.
     variables:
       - key: GATEWAY_TOKEN
         name: Token Gateway
@@ -518,7 +533,7 @@ localization:
     readme: |
       # OpenClaw devbox 🦞
 
-      Node eksekusi jarak jauh untuk OpenClaw dengan bahasa pemrograman dan alat pengembangan yang sudah terinstal.
+      Node ekstensi untuk aplikasi utama OpenClaw, menyediakan lingkungan eksekusi jarak jauh dengan bahasa pemrograman dan alat pengembangan yang sudah terinstal.
 
       ## Bahasa & Alat yang Terinstal
       - **Python 3** (python3, pip, venv)
@@ -552,6 +567,9 @@ localization:
       - **Pemrosesan dan analisis data** — Unggah file data dan minta AI memprosesnya dengan Python atau jq
       - **Operasi Git dan build proyek** — Clone repositori, build proyek, dan jalankan pengujian
       - **Skrip otomasi sistem** — Tulis dan uji shell script dan alat otomasi
+
+      ## Prasyarat
+      Anda memerlukan instans OpenClaw yang sudah berjalan. Jika belum memilikinya, deploy terlebih dahulu [template aplikasi utama OpenClaw](https://zeabur.com/templates/VTZ4FX).
 
       ## Pengaturan
       1. Sebelum deploy, salin **Gateway Token** dari tab **Instruksi** layanan OpenClaw Anda agar mudah dimasukkan nanti
