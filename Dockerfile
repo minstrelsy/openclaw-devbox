@@ -15,7 +15,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Common dev tools
     git curl wget jq unzip zip \
     # Libraries commonly needed
-    libffi-dev libssl-dev zlib1g-dev \
+    libffi-dev libssl-dev zlib1g-dev ffmpeg \
+    # Snap for asrtal-uv
+    && snap install astral-uv \
     && rm -rf /var/lib/apt/lists/*
 
 # ── Configure user-level install paths (all under /home/node/) ──
