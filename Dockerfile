@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Snap daemon
     snapd \
     # Snap for asrtal-uv
-    && snap install astral-uv \
+    # && snap install astral-uv \
     && rm -rf /var/lib/apt/lists/*
 
 # ── Configure user-level install paths (all under /home/node/) ──
