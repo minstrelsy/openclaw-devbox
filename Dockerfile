@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     # Rust (system package, rustup can override later)
     rustc cargo \
     # Common dev tools
-    git curl wget jq unzip zip \
+    git curl wget jq unzip zip tmux \
     # Libraries commonly needed
     libffi-dev libssl-dev zlib1g-dev ffmpeg \
     # Snap daemon
