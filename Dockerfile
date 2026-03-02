@@ -16,6 +16,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git curl wget jq unzip zip \
     # Libraries commonly needed
     libffi-dev libssl-dev zlib1g-dev ffmpeg \
+    # Snap daemon
+    snapd \
     # Snap for asrtal-uv
     && snap install astral-uv \
     && rm -rf /var/lib/apt/lists/*
